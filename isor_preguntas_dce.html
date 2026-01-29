@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visor de Preguntas DCE - Matemáticas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f3f4f6; scroll-behavior: smooth; }
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-blue-900 text-white p-4 shadow-lg flex justify-between items-center">
+        <div class="flex items-center space-x-3">
+            <div class="bg-white p-2 rounded-lg">
+                <i class="fas fa-calculator text-blue-900 text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-xl font-bold tracking-tight">Docente Matemáticas</h1>
+                <p class="text-xs opacity-80 uppercase tracking-widest">Diseño Centrado en Evidencias</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span id="current-badge" class="bg-blue-700 px-4 py-1 rounded-full text-sm font-semibold border border-blue-500 shadow-inner">Pregunta 1 de 2</span>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow relative overflow-hidden flex items-center justify-center p-4 md:p-8">
+        
+        <!-- Navigation Buttons -->
+        <button onclick="prevSlide()" class="absolute left-2 md:left-6 z-10 bg-white p-4 rounded-full shadow-2xl hover:bg-blue-50 transition-all text-blue-900 group">
+            <i class="fas fa-chevron-left fa-2x group-hover:scale-110 transition-transform"></i>
+        </button>
+
+        <div id="slide-container" class="w-full max-w-5xl">
+            <!-- Las preguntas se inyectan aquí -->
+        </div>
+
+        <button onclick="nextSlide()" class="absolute right-2 md:right-6 z-10 bg-white p-4 rounded-full shadow-2xl hover:bg-blue-50 transition-all text-blue-900 group">
+            <i class="fas fa-chevron-right fa-2x group-hover:scale-110 transition-transform"></i>
+        </button>
+
+    </main>
+
+    <!-- Modal para Ficha Técnica DCE -->
+    <div id="modal-dce" class="fixed inset-0 bg-slate-900/80 hidden flex items-center justify-center z-50 p-4 backdrop-blur-sm">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col animate-fade-in">
+            <div class="p-6 border-b flex justify-between items-center bg-blue-50">
+                <div class="flex items-center space-x-3">
+                    <i class="fas fa-microscope text-blue-900 text-2xl"></i>
+                    <h2 class="text-2xl font-bold text-blue-900 font-serif italic">Análisis Técnico DCE</h2>
+                </div>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition-colors">
+                    <i class="fas fa-times-circle fa-2x"></i>
+                </button>
+            </div>
+            <div id="dce-content" class="p-8 overflow-y-auto text-sm leading-relaxed">
+                <!-- Contenido dinámico -->
+            </div>
+            <div class="p-4 bg-gray-50 border-t text-center">
+                <p class="text-xs text-gray-500 italic">Este análisis cumple con los estándares del Marco de Referencia ICFES 2020</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Action -->
+    <footer class="bg-white border-t p-6 flex justify-center items-center shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.1)]">
+        <button onclick="openModal()" class="bg-blue-900 hover:bg-blue-800 text-white px-8 py-3 rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg flex items-center space-x-3">
+            <i class="fas fa-database"></i>
+            <span>EXPLORAR ESTRUCTURA DCE</span>
+        </button>
+    </footer>
+
+    <script>
+        const preguntas = [
+            {
+                id: 39,
+                componente: "Geométrico - Métrico",
+                competencia: "Argumentación",
+                afirmacion: "Validar procedimientos y estrategias matemáticas utilizadas para dar solución a problemas.",
+                evidencia: "Establece la validez o pertinencia de un procedimiento para transformar figuras planas (rotaciones).",
+                tarea: "Evaluar la validez de dos reglas de rotación propuestas para un punto en el plano cartesiano y seleccionar la justificación que explica el movimiento correcto.",
+                contexto: "Un ingeniero debe aplicar una rotación de 90º en sentido horario al punto A(2, 5) alrededor del origen (0, 0) en un plano de diseño. Dos asistentes proponen reglas para esta transformación:<br><br>• <b>Asistente X</b> afirma que la regla es (x, y) → (-y, x).<br>• <b>Asistente Y</b> afirma que la regla es (x, y) → (y, -x).",
+                enunciado: "¿Cuál asistente tiene la regla de rotación correcta y cuál es la justificación principal para validar su procedimiento?",
+                opciones: [
+                    "<b>A.</b> El Asistente X es correcto, porque la regla (x, y) → (-y, x) siempre se usa para rotaciones en sentido horario, resultando en (-5, 2).",
+                    "<b>B.</b> El Asistente Y es incorrecto, porque la rotación de 90º siempre debe cambiar el signo de la coordenada y para ser válida.",
+                    "<b>C.</b> El Asistente Y es correcto, porque la regla (x, y) → (y, -x) es la única que realiza el movimiento en sentido horario de 90º, llevando el punto (2, 5) al punto (5, -2) en el cuadrante IV.",
+                    "<b>D.</b> Ambos son incorrectos. La regla correcta es (x, y) → (-x, -y), que corresponde a una rotación de 90º en cualquier sentido."
+                ],
+                clave: "C",
+                justificacion: "La rotación de 90° en sentido horario transforma algebraicamente el punto (x, y) en (y, -x). Al aplicar esto al punto A(2, 5), obtenemos el punto (5, -2), el cual se ubica correctamente en el cuarto cuadrante del plano cartesiano.",
+                distractores: "<b>A:</b> Propone la regla de rotación antihoraria. <br><b>B:</b> Es una falacia conceptual; los signos dependen del cuadrante y sentido. <br><b>D:</b> Confunde la rotación de 90° con una simetría central (180°)."
+            },
+            {
+                id: 40,
+                componente: "Geométrico - Métrico",
+                competencia: "Argumentación",
+                afirmacion: "Validar procedimientos y estrategias matemáticas utilizadas para dar solución a problemas.",
+                evidencia: "Establece la validez o pertinencia de un procedimiento para transformar figuras planas (traslaciones).",
+                tarea: "Evaluar la validez de dos procedimientos de traslación en el plano cartesiano basándose en las reglas de signos por dirección.",
+                contexto: "En un software de diseño arquitectónico, se requiere trasladar un panel rectangular con vértice en el punto P(-3, 4). El arquitecto desea aplicar una traslación de 5 unidades a la derecha y 2 unidades hacia abajo para ubicarlo en su posición final. Dos pasantes proponen:<br><br>• <b>Pasante 1:</b> Propone la regla T(x, y) = (x + 5, y + 2).<br>• <b>Pasante 2:</b> Propone la regla T(x, y) = (x + 5, y - 2).",
+                enunciado: "¿Cuál de los pasantes propone el procedimiento correcto y por qué?",
+                opciones: [
+                    "<b>A.</b> El Pasante 1, porque al realizar un movimiento hacia abajo en el plano cartesiano, el valor de la ordenada (y) aumenta su magnitud respecto al origen.",
+                    "<b>B.</b> El Pasante 2, porque la traslación hacia la derecha implica un aumento en la abscisa (x) y la traslación hacia abajo implica una disminución en la ordenada (y).",
+                    "<b>C.</b> El Pasante 1, porque el punto resultante P'(2, 6) se mantiene en el mismo cuadrante que el punto original, conservando la simetría del diseño.",
+                    "<b>D.</b> El Pasante 2, porque al aplicar la regla, el punto resultante es P'(8, 2), lo cual corresponde exactamente a un desplazamiento de 5 unidades desde el eje y."
+                ],
+                clave: "B",
+                justificacion: "En el sistema de coordenadas cartesianas, los desplazamientos a la derecha son aditivos para 'x' y los desplazamientos hacia abajo son sustractivos para 'y'. El Pasante 2 aplica correctamente la lógica: (-3 + 5, 4 - 2) = (2, 2).",
+                distractores: "<b>A:</b> Confunde la dirección positiva/negativa del eje vertical. <br><b>C:</b> El cálculo aritmético es incorrecto (sumó en lugar de restar en y). <br><b>D:</b> El cálculo de la abscisa es erróneo (-3 + 5 no es 8)."
+            }
+        ];
+
+        let currentIndex = 0;
+
+        function renderSlide() {
+            const q = preguntas[currentIndex];
+            const container = document.getElementById('slide-container');
+            const badge = document.getElementById('current-badge');
+            
+            badge.innerText = `Pregunta ${currentIndex + 1} de ${preguntas.length}`;
+            
+            container.innerHTML = `
+                <div class="bg-white w-full p-6 md:p-10 rounded-3xl shadow-2xl glass border-t-[12px] border-blue-900 animate-fade-in relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-5">
+                        <i class="fas fa-drafting-compass fa-10x"></i>
+                    </div>
+
+                    <div class="flex justify-between items-start mb-8 relative">
+                        <div class="bg-blue-900 text-white px-6 py-2 rounded-full text-sm font-black uppercase tracking-widest shadow-md">
+                            PREGUNTA #${q.id}
+                        </div>
+                        <div class="text-blue-900/40 font-bold flex items-center bg-blue-50 px-4 py-2 rounded-lg">
+                            <i class="fas fa-layer-group mr-2"></i> ${q.componente}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-8 relative">
+                        <div class="flex items-center space-x-2 mb-4">
+                            <div class="h-1 w-10 bg-blue-900 rounded-full"></div>
+                            <h3 class="text-sm font-black text-blue-900 uppercase tracking-tighter">Situación Problema</h3>
+                        </div>
+                        <p class="text-gray-700 text-lg leading-relaxed bg-slate-50 p-6 rounded-2xl border border-slate-100 shadow-inner italic">
+                            "${q.contexto}"
+                        </p>
+                    </div>
+
+                    <div class="mb-4 relative">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-8 leading-tight underline decoration-blue-200 underline-offset-8">
+                            ${q.enunciado}
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            ${q.opciones.map((opt, idx) => `
+                                <div class="p-5 border-2 border-slate-100 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all cursor-pointer group shadow-sm flex items-start space-x-4">
+                                    <div class="mt-1">
+                                        <div class="w-6 h-6 rounded-full border-2 border-blue-900 flex items-center justify-center text-xs font-bold text-blue-900 group-hover:bg-blue-900 group-hover:text-white">
+                                            ${String.fromCharCode(65 + idx)}
+                                        </div>
+                                    </div>
+                                    <p class="text-slate-700 font-medium leading-snug">${opt.substring(3)}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function openModal() {
+            const q = preguntas[currentIndex];
+            const content = document.getElementById('dce-content');
+            content.innerHTML = `
+                <div class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-100">
+                            <span class="text-[10px] uppercase font-black text-blue-400 block mb-1">Componente Evaluado</span>
+                            <p class="font-bold text-blue-900 text-base">${q.componente}</p>
+                        </div>
+                        <div class="p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                            <span class="text-[10px] uppercase font-black text-indigo-400 block mb-1">Competencia</span>
+                            <p class="font-bold text-indigo-900 text-base">${q.competencia}</p>
+                        </div>
+                    </div>
+
+                    <div class="border rounded-xl overflow-hidden">
+                        <div class="p-3 bg-slate-800 text-white text-xs font-bold uppercase tracking-widest">Afirmación de Prueba</div>
+                        <div class="p-4 bg-white text-slate-700">${q.afirmacion}</div>
+                    </div>
+
+                    <div class="border rounded-xl overflow-hidden">
+                        <div class="p-3 bg-slate-800 text-white text-xs font-bold uppercase tracking-widest">Evidencia Observada</div>
+                        <div class="p-4 bg-white text-slate-700">${q.evidencia}</div>
+                    </div>
+
+                    <div class="border rounded-xl overflow-hidden">
+                        <div class="p-3 bg-slate-100 text-slate-500 text-[10px] font-black uppercase">Tarea del Estudiante</div>
+                        <div class="p-4 bg-white text-slate-600 italic">${q.tarea}</div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                        <div class="md:col-span-1 p-6 bg-green-600 rounded-2xl text-white flex flex-col items-center justify-center shadow-lg">
+                            <span class="text-xs font-bold uppercase mb-2 opacity-80 text-center">Clave Correcta</span>
+                            <span class="text-6xl font-black">${q.clave}</span>
+                        </div>
+                        <div class="md:col-span-2 p-5 bg-green-50 rounded-2xl border border-green-200">
+                            <h4 class="font-black text-green-800 text-xs uppercase mb-2 flex items-center">
+                                <i class="fas fa-check-circle mr-2"></i> Por qué es la clave:
+                            </h4>
+                            <p class="text-green-900 font-medium">${q.justificacion}</p>
+                        </div>
+                    </div>
+
+                    <div class="p-5 bg-red-50 rounded-2xl border border-red-100 mt-4">
+                        <h4 class="font-black text-red-800 text-xs uppercase mb-2 flex items-center">
+                            <i class="fas fa-exclamation-triangle mr-2"></i> Análisis de errores (Distractores):
+                        </h4>
+                        <div class="text-red-900 text-xs space-y-2 leading-relaxed">
+                            ${q.distractores}
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-dce').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-dce').classList.add('hidden');
+        }
+
+        function nextSlide() {
+            if (currentIndex < preguntas.length - 1) {
+                currentIndex++;
+                renderSlide();
+            }
+        }
+
+        function prevSlide() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                renderSlide();
+            }
+        }
+
+        // Cierre de modal con escape
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeModal();
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+
+        window.onload = renderSlide;
+    </script>
+</body>
+</html>
